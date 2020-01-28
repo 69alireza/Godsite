@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Domain.Site.Models
+namespace Domain.App.Models
 {
      public  class Users
     {

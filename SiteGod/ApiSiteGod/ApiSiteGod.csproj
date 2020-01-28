@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure.Data.Site\Infrastructure.Data.Site.csproj" />
+    <ProjectReference Include="..\Infrastructure.Data.Site\Infrastructure.Data.App.csproj" />
+    <ProjectReference Include="..\Infrastructure.Ioc.App\Infrastructure.Ioc.App.csproj" />
   </ItemGroup>
 
 </Project>

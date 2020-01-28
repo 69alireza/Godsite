@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Infrastructure.Data.Site.Context;
+using Infrastructure.Data.App.Context;
+using Infrastructure.Ioc.App.DependencyContainer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +34,9 @@ namespace ApiSiteGod
             {
                 options.UseSqlServer(Configuration.GetConnectionString("SiteDBConection"));
             });
+
+            // Method IoC
+            RegisterServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +57,11 @@ namespace ApiSiteGod
             {
                 endpoints.MapControllers();
             });
+        }
+
+        public static void RegisterServices(IServiceCollection services)
+        {
+            DependencyContainer.RegisterServices(services);
         }
     }
 }
