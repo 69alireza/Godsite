@@ -9,16 +9,16 @@ using System.Text;
 
 namespace Infrastructure.Ioc.App.DependencyContainer
 {
-   public class DependencyContainer
+    public class DependencyContainer
     {
-        public  static void RegisterServices(IServiceCollection services)
+        public static void RegisterServices(IServiceCollection services)
         {
             //Application Layer
             services.AddScoped<ImainService, mainService>();
 
             //Infrastructure.Data.App Layer
-           services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped(typeof(IGenericRepository <>),typeof( GenericRepository<>));
+        
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             // Add Memory cache
             services.AddMemoryCache();

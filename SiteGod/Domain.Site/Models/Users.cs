@@ -10,12 +10,15 @@ namespace Domain.App.Models
         [Key]
         public int UserId { get; set; }
         [StringLength(80)]
+        [Required]
         public string UserName { get; set; }
         [StringLength(80)]
         public string Fname { get; set; }
         [StringLength(80)]
         public string Lname { get; set; }
         [StringLength(200)]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
         [StringLength(200)]
         public string TemporaryEmail { get; set; }
@@ -32,6 +35,7 @@ namespace Domain.App.Models
         [StringLength(80)]
         public string Study { get; set; }
         [StringLength(200)]
+        [Required]
         public string Password { get; set; }
         [StringLength(200)]
         public string ActiveCode { get; set; }

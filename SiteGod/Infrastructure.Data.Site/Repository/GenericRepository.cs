@@ -23,14 +23,14 @@ namespace Infrastructure.Data.App.Repository
         public virtual async Task<TEntity> Add(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
-
             Save();
             return entity;
         }
 
-        public virtual async  Task<TEntity> Find(object id, Expression<Func<TEntity, bool>> where = null)
+        public virtual async Task<TEntity> Find(Expression<Func<TEntity, bool>> where = null)
         {
             return await _dbSet.Where(where).SingleOrDefaultAsync<TEntity>();
+
         }
 
         public virtual async Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>> where = null)
@@ -43,15 +43,15 @@ namespace Infrastructure.Data.App.Repository
             return await query.ToListAsync();
         }
 
-        public virtual async Task<bool> IsExists(object id,Expression<Func<TEntity, bool>> where = null)
+        public virtual async Task<bool> IsExists(Expression<Func<TEntity, bool>> where = null)
         {
             return await _dbSet.Where(where).AnyAsync<TEntity>();
         }
 
-        public virtual async Task<TEntity> Remove(object id)
+        public virtual async Task<TEntity> Remove(Expression<Func<TEntity, bool>> where = null)
         {
-            var item = await Find(id);
-             _dbSet.Remove(item);
+            var item = await _dbSet.Where(where).SingleAsync<TEntity>();
+            _dbSet.Remove(item);
             Save();
             return item;
         }

@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Infrastructure.Ioc.App\Infrastructure.Ioc.App.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

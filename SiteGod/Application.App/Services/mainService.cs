@@ -12,12 +12,14 @@ namespace Application.App.Services
 {
     public class mainService : ImainService
     {
-        private IUserRepository _userRepository;
+       
+        private IGenericRepository<Users> _userRepository;
         private IMemoryCache _Cache;
        
         private const string userCacheKey = "getalluser-cache-key";
-        public mainService(IUserRepository userRepository, IMemoryCache cache)
+        public mainService(IGenericRepository<Users> userRepository, IMemoryCache cache)
         {
+
             _userRepository = userRepository;
             _Cache = cache;
         }
@@ -27,7 +29,7 @@ namespace Application.App.Services
            return _userRepository.Add(users);
         }
 
-        public async  Task<Users> Find(int id)
+        public async Task<Users> Find(int id)
         {
             var cacheuser = _Cache.Get<Users>(id);
             if(cacheuser != null)
@@ -36,7 +38,7 @@ namespace Application.App.Services
             }
             else
             {
-                var user = await _userRepository.Find(id);
+                var user = await _userRepository.Find(U=>U.UserId == id);
                 var cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(60));
                  _Cache.Set(user.UserId, user, cacheOptions);
                 return  user;
@@ -51,7 +53,7 @@ namespace Application.App.Services
             {
                 if (users == null)
                 {
-                    users =await _userRepository.GetAllUsers();
+                    users =await _userRepository.Get();
                 }
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
             // Keep in cache for this time, reset time if accessed.
@@ -65,12 +67,12 @@ namespace Application.App.Services
 
         public Task<bool> IsExists(int id)
         {
-            return _userRepository.IsExists(id);
+            return _userRepository.IsExists(U=>U.UserId == id);
         }
 
         public Task<Users> Remove(int id)
         {
-            return _userRepository.Remove(id);
+            return _userRepository.Remove(u=>u.UserId == id);
         }
 
         public Task<Users> Update(Users users)
