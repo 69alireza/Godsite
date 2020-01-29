@@ -33,9 +33,9 @@ namespace Infrastructure.Data.App.Repository
             return await _ctx.users.SingleOrDefaultAsync(u => u.UserId == id);
         }
 
-        public IEnumerable<Users> GetAllUsers()
+        public async Task<IEnumerable<Users>> GetAllUsers()
         {
-            return _ctx.users;
+            return await _ctx.users.ToListAsync();
         }
 
         public async Task<bool> IsExists(int id)

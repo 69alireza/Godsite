@@ -2,6 +2,7 @@
 using Application.App.ViewModel.UserViewModel;
 using Domain.App.Interfaces;
 using Domain.App.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,9 +13,13 @@ namespace Application.App.Services
     public class mainService : ImainService
     {
         private IUserRepository _userRepository;
-        public mainService(IUserRepository userRepository)
+        private IMemoryCache _Cache;
+       
+        private const string userCacheKey = "getalluser-cache-key";
+        public mainService(IUserRepository userRepository, IMemoryCache cache)
         {
             _userRepository = userRepository;
+            _Cache = cache;
         }
 
         public Task<Users> Add(Users users)
@@ -22,14 +27,40 @@ namespace Application.App.Services
            return _userRepository.Add(users);
         }
 
-        public Task<Users> Find(int id)
+        public async  Task<Users> Find(int id)
         {
-            return _userRepository.Find(id);
+            var cacheuser = _Cache.Get<Users>(id);
+            if(cacheuser != null)
+            {
+                return  cacheuser;
+            }
+            else
+            {
+                var user = await _userRepository.Find(id);
+                var cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(60));
+                 _Cache.Set(user.UserId, user, cacheOptions);
+                return  user;
+            }
+          
         }
 
-        public IEnumerable<Users> GetAllUsers()
+        public async Task<IEnumerable<Users>> GetAllUsers()
+        
         {
-            return _userRepository.GetAllUsers();
+            if (!_Cache.TryGetValue("UserList", out IEnumerable<Users> users))
+            {
+                if (users == null)
+                {
+                    users =await _userRepository.GetAllUsers();
+                }
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+            // Keep in cache for this time, reset time if accessed.
+            .SetSlidingExpiration(TimeSpan.FromSeconds(60));
+
+                _Cache.Set("UserList", users, cacheEntryOptions);
+            }
+            return users;
+
         }
 
         public Task<bool> IsExists(int id)

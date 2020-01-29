@@ -18,6 +18,9 @@ namespace Infrastructure.Ioc.App.DependencyContainer
 
             //Infrastructure.Data.App Layer
            services.AddScoped<IUserRepository, UserRepository>();
+
+            // Add Memory cache
+            services.AddMemoryCache();
         }
     }
 }

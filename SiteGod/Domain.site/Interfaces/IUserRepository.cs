@@ -8,7 +8,7 @@ namespace Domain.App.Interfaces
 {
      public interface IUserRepository
     {
-        IEnumerable<Users> GetAllUsers();
+        Task<IEnumerable<Users>> GetAllUsers();
         Task<Users> Add(Users users);
         Task<Users> Find(int id);
         Task<Users> Update(Users users);

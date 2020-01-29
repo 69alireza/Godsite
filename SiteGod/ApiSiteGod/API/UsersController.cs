@@ -1,41 +1,45 @@
-﻿using Application.App.Interfaces;
-using Domain.App.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Domain.App.Models;
+using Infrastructure.Data.App.Context;
 
-namespace ApiSiteGod.Controllers
+namespace ApiSiteGod.API
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private ImainService _mainService;
+        private readonly APP_Context _context;
 
-        public UsersController(ImainService mainService)
+        public UsersController(APP_Context context)
         {
-            _mainService = mainService;
+            _context = context;
         }
 
         // GET: api/Users
         [HttpGet]
-        public Task<IEnumerable<Users>> Getusers()
+        public async Task<ActionResult<IEnumerable<Users>>> Getusers()
         {
-            return _mainService.GetAllUsers();
+            return await _context.users.ToListAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Users>> GetUsers(int id)
         {
-            var IsExists = await _mainService.IsExists(id);
+            var users = await _context.users.FindAsync(id);
 
-            if (IsExists == false)
+            if (users == null)
             {
                 return NotFound();
             }
 
-            return await _mainService.Find(id);
+            return users;
         }
 
         // PUT: api/Users/5
@@ -49,7 +53,23 @@ namespace ApiSiteGod.Controllers
                 return BadRequest();
             }
 
-            await _mainService.Update(users);
+            _context.Entry(users).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UsersExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
@@ -60,7 +80,8 @@ namespace ApiSiteGod.Controllers
         [HttpPost]
         public async Task<ActionResult<Users>> PostUsers(Users users)
         {
-            await _mainService.Add(users);
+            _context.users.Add(users);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUsers", new { id = users.UserId }, users);
         }
@@ -69,20 +90,21 @@ namespace ApiSiteGod.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Users>> DeleteUsers(int id)
         {
-            var users = await _mainService.Find(id);
+            var users = await _context.users.FindAsync(id);
             if (users == null)
             {
                 return NotFound();
             }
 
-            await _mainService.Remove(id);
+            _context.users.Remove(users);
+            await _context.SaveChangesAsync();
 
             return users;
         }
 
-        private async Task<bool> UsersExists(int id)
+        private bool UsersExists(int id)
         {
-            return await _mainService.IsExists(id);
+            return _context.users.Any(e => e.UserId == id);
         }
     }
 }

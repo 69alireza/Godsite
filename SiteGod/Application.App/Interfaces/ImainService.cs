@@ -9,7 +9,7 @@ namespace Application.App.Interfaces
 {
      public interface ImainService
     {
-        IEnumerable<Users> GetAllUsers();
+        Task<IEnumerable<Users>> GetAllUsers();
         Task<Users> Add(Users users);
         Task<Users> Find(int id);
         Task<Users> Update(Users users);
