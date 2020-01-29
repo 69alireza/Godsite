@@ -18,6 +18,7 @@ namespace Infrastructure.Ioc.App.DependencyContainer
 
             //Infrastructure.Data.App Layer
            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IGenericRepository <>),typeof( GenericRepository<>));
 
             // Add Memory cache
             services.AddMemoryCache();
