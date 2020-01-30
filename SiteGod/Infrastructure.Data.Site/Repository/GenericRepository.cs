@@ -23,7 +23,7 @@ namespace Infrastructure.Data.App.Repository
         public virtual async Task<TEntity> Add(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
-            Save();
+            await _ctx.SaveChangesAsync();
             return entity;
         }
 
@@ -52,7 +52,7 @@ namespace Infrastructure.Data.App.Repository
         {
             var item = await _dbSet.Where(where).SingleAsync<TEntity>();
             _dbSet.Remove(item);
-            Save();
+            await _ctx.SaveChangesAsync();
             return item;
         }
 

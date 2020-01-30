@@ -31,36 +31,36 @@ namespace Application.App.Services
 
         public async Task<Users> Find(int id)
         {
-            var cacheuser = _Cache.Get<Users>(id);
-            if(cacheuser != null)
-            {
-                return  cacheuser;
-            }
-            else
-            {
-                var user = await _userRepository.Find(U=>U.UserId == id);
-                var cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(60));
-                 _Cache.Set(user.UserId, user, cacheOptions);
+            //    var cacheuser = _Cache.Get<Users>(id);
+            //    if(cacheuser != null)
+            //    {
+            //        return  cacheuser;
+            //    }
+            //    else
+            //    {
+            var user = await _userRepository.Find(U=>U.UserId == id);
+                //var cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromSeconds(60));
+                // _Cache.Set(user.UserId, user, cacheOptions);
                 return  user;
-            }
+            //}
           
         }
 
         public async Task<IEnumerable<Users>> GetAllUsers()
         
         {
-            if (!_Cache.TryGetValue("UserList", out IEnumerable<Users> users))
-            {
-                if (users == null)
-                {
-                    users =await _userRepository.Get();
-                }
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-            // Keep in cache for this time, reset time if accessed.
-            .SetSlidingExpiration(TimeSpan.FromSeconds(60));
+            //if (!_Cache.TryGetValue("UserList", out IEnumerable<Users> users))
+            //{
+            //    if (users == null)
+            //    {
+                   var users =await _userRepository.Get();
+            //    }
+            //    var cacheEntryOptions = new MemoryCacheEntryOptions()
+            //// Keep in cache for this time, reset time if accessed.
+            //.SetAbsoluteExpiration(TimeSpan.FromSeconds(60));
 
-                _Cache.Set("UserList", users, cacheEntryOptions);
-            }
+            //    _Cache.Set("UserList", users, cacheEntryOptions);
+            //}
             return users;
 
         }

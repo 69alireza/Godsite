@@ -31,9 +31,9 @@ namespace ApiSiteGod
         {
             services.AddControllers();
             services.AddDbContext<APP_Context>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("SiteDBConection"));
-            });
+            options.UseSqlServer(Configuration.GetConnectionString("SiteDBConection")));
+
+
 
             // Method IoC
             RegisterServices(services);
